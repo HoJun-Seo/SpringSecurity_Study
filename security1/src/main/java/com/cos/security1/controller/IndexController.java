@@ -33,6 +33,7 @@ public class IndexController {
         return "manager";
     }
 
+    // 스프링 시큐리티가 해당 주소를 낚아챔 -> SecurityConfig 파일 생성 후 작동하지 않음(낚아채지 못함)
     @GetMapping("/login")
     @ResponseBody
     public String login() {
