@@ -1,11 +1,23 @@
 package com.cos.security1.controller;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cos.security1.model.User;
+import com.cos.security1.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
+
 @Controller
+@RequiredArgsConstructor
 public class IndexController {
+
+    // 의존성 추가
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @GetMapping({ "", "/" })
     public String index() {
@@ -34,21 +46,28 @@ public class IndexController {
     }
 
     // 스프링 시큐리티가 해당 주소를 낚아챔 -> SecurityConfig 파일 생성 후 작동하지 않음(낚아채지 못함)
-    @GetMapping("/login")
-    @ResponseBody
-    public String login() {
-        return "login";
+    @GetMapping("/loginForm")
+    public String loginForm() {
+        return "loginForm";
     }
 
-    @GetMapping("/join")
-    @ResponseBody
-    public String join() {
-        return "join";
+    @GetMapping("/joinForm")
+    public String joinForm() {
+        return "joinForm";
     }
 
-    @GetMapping("/joinProc")
-    @ResponseBody
-    public String joinProc() {
-        return "회원가입 완료됨";
+    @PostMapping("/join")
+    public String join(User user) {
+        user.setRole("ROLE_USER");
+        // ID 는 데이터베이스에서 키 값에 대해
+        // Auto_Increment 전략이 적용되었기 때문에 setter 를 사용해줄 필요가 없다.
+        // createDate 는 @CreationTimestamp 어노테이션을 통해
+        // 생성날짜가 자동으로 생성되었으므로 setter 를 사용해줄 필요가 없다.
+
+        String rawPassword = user.getPassword();
+        String encPassword = bCryptPasswordEncoder.encode(rawPassword);
+        user.setPassword(encPassword); // 인코딩된 패스워드 저장
+        userRepository.save(user);
+        return "redirect:/loginForm";
     }
 }
