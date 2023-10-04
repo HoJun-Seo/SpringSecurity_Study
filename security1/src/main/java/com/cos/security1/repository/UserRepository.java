@@ -10,4 +10,9 @@ import com.cos.security1.model.User;
 // 자동으로 JpaRepository 를 상속받은 인터페이스의 객체를 생성하여 스프링 빈으로 등록시켜준다. 
 public interface UserRepository extends JpaRepository<User, Integer> {
 
+    // findBy 까지는 규칙, Username 은 문법
+    // select * from user where username = ? 과 같은 SQL 쿼리가
+    // 하이버네이트를 통해 자동으로 작성되어 데이터베이스로 전달된다.
+    // 이때 위의 ? 에는 파라미터로 넘어온 username 이 적재되게 된다.
+    public User findByUsername(String username);
 }
