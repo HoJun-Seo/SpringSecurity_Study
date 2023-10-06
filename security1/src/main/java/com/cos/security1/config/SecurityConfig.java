@@ -11,7 +11,7 @@ import org.springframework.security.web.access.expression.WebExpressionAuthoriza
 
 @Configuration
 @EnableWebSecurity // 스프링 시큐리티 필터가 스프링 기본 필터 체인에 등록됨
-@EnableMethodSecurity(securedEnabled = true)
+@EnableMethodSecurity(securedEnabled = true, prePostEnabled = true) // secured 어노테이션 활성화, preAuthorize 어노테이션 활성화
 public class SecurityConfig {
 
     // @Bean 어노테이션을 붙여주면 해당 메서드의 리턴되는 객체를
