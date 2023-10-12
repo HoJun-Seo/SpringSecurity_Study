@@ -35,7 +35,8 @@ public class SecurityConfig {
         // login -> loginForm (동사 -> 명사로 요청 URI 이름 변경)
         http.formLogin((formLogin) -> formLogin.loginPage("/loginForm")
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/"));
+                .defaultSuccessUrl("/")) // oauth2Login() 추가
+                .oauth2Login(oauth2 -> oauth2.loginPage("/loginForm"));
         // loginProcessingUrl() 메소드 추가 시 기능
         // URI 로 작성해둔 /login 이 호출 시 시큐리티가 요청을 중간에 낚아채서
         // 대신 로그인을 진행해준다.
