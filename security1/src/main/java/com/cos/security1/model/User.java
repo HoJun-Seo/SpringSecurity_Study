@@ -23,6 +23,10 @@ public class User {
     private String email;
     private String role; // ROLE_USER, ROLE_ADMIN
 
+    // 일반 사용자, OAuth 로그인 사용자 구분을 위한 속성
+    private String provider;
+    private String providerId;
+
     @CreationTimestamp
     private Timestamp createDate;
 }

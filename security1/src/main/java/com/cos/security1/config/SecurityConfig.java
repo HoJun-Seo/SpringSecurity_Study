@@ -9,10 +9,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 
+import com.cos.security1.config.oauth.PrincipalOAuth2UserService;
+
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableWebSecurity // 스프링 시큐리티 필터가 스프링 기본 필터 체인에 등록됨
 @EnableMethodSecurity(securedEnabled = true, prePostEnabled = true) // secured 어노테이션 활성화, preAuthorize 어노테이션 활성화
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final PrincipalOAuth2UserService principalOAuth2UserService;
 
     // @Bean 어노테이션을 붙여주면 해당 메서드의 리턴되는 객체를
     // 스프링 컨테이너에 IoC 로 등록해준다.(스프링 빈 등록)
@@ -36,7 +43,8 @@ public class SecurityConfig {
         http.formLogin((formLogin) -> formLogin.loginPage("/loginForm")
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/")) // oauth2Login() 추가
-                .oauth2Login(oauth2 -> oauth2.loginPage("/loginForm"));
+                .oauth2Login(oauth2 -> oauth2.loginPage("/loginForm")
+                        .userInfoEndpoint(userinfo -> userinfo.userService(principalOAuth2UserService)));
         // loginProcessingUrl() 메소드 추가 시 기능
         // URI 로 작성해둔 /login 이 호출 시 시큐리티가 요청을 중간에 낚아채서
         // 대신 로그인을 진행해준다.
