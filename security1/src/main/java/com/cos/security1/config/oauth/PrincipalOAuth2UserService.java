@@ -16,6 +16,8 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
         System.out.println("getClientRegistration : " + userRequest.getClientRegistration());
         System.out.println("getAccessToken : " + userRequest.getAccessToken().getTokenValue());
         System.out.println("getAttributes : " + super.loadUser(userRequest).getAttributes());
+
+        OAuth2User oAuth2User = super.loadUser(userRequest);
         return super.loadUser(userRequest);
     }
 }

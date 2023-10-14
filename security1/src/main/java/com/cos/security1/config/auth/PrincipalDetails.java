@@ -8,8 +8,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.cos.security1.model.User;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+@Data
 @RequiredArgsConstructor
 public class PrincipalDetails implements UserDetails {
 
