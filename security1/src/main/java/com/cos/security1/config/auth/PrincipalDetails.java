@@ -2,9 +2,11 @@ package com.cos.security1.config.auth;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.cos.security1.model.User;
 
@@ -13,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
-public class PrincipalDetails implements UserDetails {
+public class PrincipalDetails implements UserDetails, OAuth2User {
 
     private final User user;
 
@@ -75,5 +77,17 @@ public class PrincipalDetails implements UserDetails {
          * uset.getLoginDate(); 메소드를 통해 최종 로그인 날짜를 가져와서
          * 현재시간 - 최종 로그인 시간을 계산한 결과가 1년을 초과하면 false 를 반환하는 방식
          */
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAttributes'");
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getName'");
     }
 }
