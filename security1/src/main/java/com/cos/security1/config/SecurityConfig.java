@@ -23,10 +23,10 @@ public class SecurityConfig {
 
     // @Bean 어노테이션을 붙여주면 해당 메서드의 리턴되는 객체를
     // 스프링 컨테이너에 IoC 로 등록해준다.(스프링 빈 등록)
-    @Bean
-    public BCryptPasswordEncoder encodePwd() {
-        return new BCryptPasswordEncoder();
-    }
+    // @Bean
+    // public BCryptPasswordEncoder encodePwd() {
+    // return new BCryptPasswordEncoder();
+    // }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

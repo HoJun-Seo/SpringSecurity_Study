@@ -11,13 +11,23 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import com.cos.security1.model.User;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 @Data
-@RequiredArgsConstructor
 public class PrincipalDetails implements UserDetails, OAuth2User {
 
-    private final User user;
+    private User user;
+    private Map<String, Object> attributes;
+
+    // 일반 로그인 기능이 동작될 때 활성화되는 생성자
+    public PrincipalDetails(User user) {
+        this.user = user;
+    }
+
+    // OAuth 로그인 기능이 동작될 때 활성화되는 생성자
+    public PrincipalDetails(User user, Map<String, Object> attributes) {
+        this.user = user;
+        this.attributes = attributes;
+    }
 
     // 해당 User 의 권한을 리턴하는 곳
     @Override
@@ -81,13 +91,11 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
     @Override
     public Map<String, Object> getAttributes() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAttributes'");
+        return attributes;
     }
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getName'");
+        return null;
     }
 }
