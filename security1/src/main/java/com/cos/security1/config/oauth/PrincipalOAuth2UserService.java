@@ -32,7 +32,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
         System.out.println("getAttributes : " + oAuth2User.getAttributes());
 
         // 회원가입 강제진행 절차 시작
-        String provider = userRequest.getClientRegistration().getClientId(); // google
+        String provider = userRequest.getClientRegistration().getRegistrationId(); // google
         String providerId = oAuth2User.getAttribute("sub");
         String username = provider + "_" + providerId; // google_111816899068720207957 -> 회원간 username 충돌 방지차원
         String password = bCryptPasswordEncoder.encode("getInthere");
