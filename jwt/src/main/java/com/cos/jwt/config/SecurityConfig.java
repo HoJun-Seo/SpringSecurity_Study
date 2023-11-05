@@ -8,6 +8,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.web.filter.CorsFilter;
 
 import com.cos.jwt.filter.MyFilter1;
@@ -24,6 +25,8 @@ public class SecurityConfig {
 
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+                http.addFilterBefore(new MyFilter1(), SecurityContextHolderFilter.class);
                 http.csrf((csrfConfig) -> csrfConfig.disable());
 
                 // 세션을 사용하지 않겠다는 설정
