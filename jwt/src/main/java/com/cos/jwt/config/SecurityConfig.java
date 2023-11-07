@@ -2,15 +2,19 @@ package com.cos.jwt.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.web.filter.CorsFilter;
 
+import com.cos.jwt.JwtAuthenticationFilter;
 import com.cos.jwt.filter.MyFilter1;
 
 import lombok.RequiredArgsConstructor;
@@ -38,6 +42,13 @@ public class SecurityConfig {
                 // formLogin 과 기본적인 http 로그인 기능을 사용하지 않음
                 http.formLogin((formLogin) -> formLogin.disable());
                 http.httpBasic((httpBasic) -> httpBasic.disable());
+                http.addFilter(new JwtAuthenticationFilter(new AuthenticationManager() {
+                        @Override
+                        public Authentication authenticate(Authentication authentication)
+                                        throws AuthenticationException {
+                                return authentication;
+                        }
+                }));
 
                 // 권한별 특정 URI 접근 요청 허가
                 http.authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/v1/user/**")
