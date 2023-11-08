@@ -1,4 +1,4 @@
-package com.cos.jwt.filter;
+package com.cos.jwt.config.filter;
 
 import java.io.IOException;
 import java.io.PrintWriter;

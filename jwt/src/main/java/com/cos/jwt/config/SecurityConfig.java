@@ -6,16 +6,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.web.filter.CorsFilter;
 
-import com.cos.jwt.JwtAuthenticationFilter;
-import com.cos.jwt.filter.MyFilter1;
+import com.cos.jwt.config.filter.JwtAuthenticationFilter;
+import com.cos.jwt.config.filter.MyFilter1;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +24,11 @@ public class SecurityConfig {
 
         // CorsConfig 클래스에서 등록한 CorsFilter 스프링 빈 의존성 주입(DI)
         private final CorsFilter corsFilter;
+
+        @Bean
+        public BCryptPasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -42,13 +45,12 @@ public class SecurityConfig {
                 // formLogin 과 기본적인 http 로그인 기능을 사용하지 않음
                 http.formLogin((formLogin) -> formLogin.disable());
                 http.httpBasic((httpBasic) -> httpBasic.disable());
-                http.addFilter(new JwtAuthenticationFilter(new AuthenticationManager() {
-                        @Override
-                        public Authentication authenticate(Authentication authentication)
-                                        throws AuthenticationException {
-                                return authentication;
-                        }
-                }));
+
+                AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+                if (authenticationManager == null) {
+                        System.out.println("AuthenticationManager 가 null 입니다.");
+                }
+                http.addFilter(new JwtAuthenticationFilter(authenticationManager));
 
                 // 권한별 특정 URI 접근 요청 허가
                 http.authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/v1/user/**")

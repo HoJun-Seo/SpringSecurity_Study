@@ -4,7 +4,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.cos.jwt.filter.MyFilter1;
+import com.cos.jwt.config.filter.MyFilter1;
 
 @Configuration
 public class FilterConfig {
