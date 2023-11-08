@@ -20,6 +20,7 @@ public class User {
     private String username;
     private String password;
     private String roles; // USER, ADMIN
+    private String email;
 
     // 만약 유저 Role 이 하나만 존재하면 굳이 getRoleList() 와 같은 메서드를 만들어줄 필요가 없다.
     // 아래의 메서드는 한 유저가 두 가지 이상의 권한을 가지고 있을 경우
