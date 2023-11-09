@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -12,6 +13,7 @@ import org.springframework.security.web.access.expression.WebExpressionAuthoriza
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.web.filter.CorsFilter;
 
+import com.cos.jwt.config.auth.PrincipalDetailsService;
 import com.cos.jwt.config.filter.JwtAuthenticationFilter;
 import com.cos.jwt.config.filter.MyFilter1;
 
@@ -24,6 +26,7 @@ public class SecurityConfig {
 
         // CorsConfig 클래스에서 등록한 CorsFilter 스프링 빈 의존성 주입(DI)
         private final CorsFilter corsFilter;
+        private final PrincipalDetailsService principalDetailsService;
 
         @Bean
         public BCryptPasswordEncoder passwordEncoder() {
@@ -44,13 +47,8 @@ public class SecurityConfig {
 
                 // formLogin 과 기본적인 http 로그인 기능을 사용하지 않음
                 http.formLogin((formLogin) -> formLogin.disable());
-                http.httpBasic((httpBasic) -> httpBasic.disable());
-
-                AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-                if (authenticationManager == null) {
-                        System.out.println("AuthenticationManager 가 null 입니다.");
-                }
-                http.addFilter(new JwtAuthenticationFilter(authenticationManager));
+                http.httpBasic((httpBasic) -> httpBasic.disable())
+                                .apply(new MyCustomDsl());
 
                 // 권한별 특정 URI 접근 요청 허가
                 http.authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/v1/user/**")
@@ -64,13 +62,16 @@ public class SecurityConfig {
                                                 "hasRole('ROLE_ADMIN')"))
                                 .anyRequest().permitAll());
 
-                // CORS 필터 추가
-                // 모든 요청을 이 필터를 거치게 되며, 이렇게 되면 서버는 모든 CORS 정책들에 대해 벗어나게 된다.
-                // 즉, cross-origin 요청이 와도 모두 허용된다.
-                // 인증이 필요없는 요청의 경우 컨트롤러에 @CrossOrigin 어노테이션을 달아주는 것으로 해결할 수 있으나
-                // 인증이 필요한 요청들의 경우 이와 같이 Security 필터에 직접 CORS 와 관련된 요청 허용설정을 등록해주어야 한다.
-                http.addFilter(corsFilter);
-
                 return http.build();
+        }
+
+        public class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl, HttpSecurity> {
+
+                @Override
+                public void configure(HttpSecurity http) throws Exception {
+                        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+                        http.addFilter(corsFilter).addFilter(new JwtAuthenticationFilter(authenticationManager));
+                }
+
         }
 }

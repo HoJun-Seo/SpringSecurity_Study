@@ -1,6 +1,7 @@
 package com.cos.jwt.config.filter;
 
-import org.springframework.context.annotation.Configuration;
+import java.io.IOException;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,8 @@ import com.cos.jwt.config.auth.PrincipalDetails;
 import com.cos.jwt.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -37,13 +40,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     user.getUsername(), user.getPassword());
 
-            // 아래의 코드가 실행될 때 PrincipalDetailsService 의 loadUserByUsername() 메서드가 실행됨
-            // loadUserByUserName() 메서드는 username 정보만 받고
-            // password 의 경우 스프링에서 데이터베이스와의 통신을 통해 자체적으로 처리해준다.
-            // password 가 내부적으로 어떻게 처리해야 되는지에 대해서는 궁금해하지 않아도 된다.
-            // AuthenticationManager 에 토큰을 넣어서 던지면 내부의 기능을 통해 인증을 해준다.
-            // 인증이 되고 나면 authentication 에 결과값을 돌려받는다.
-            // authentication 에는 로그인한 유저에 대한 정보가 담긴다.(PrincipalDetails)
             System.out.println("------- authenticationToken --------");
             System.out.println("authenticationToken : " + authenticationToken.toString());
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
@@ -64,5 +60,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         System.out.println("=====================");
 
         return null; // 오류가 날 경우 null 리턴
+    }
+
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+            Authentication authResult) throws IOException, ServletException {
+        System.out.println("successfulAuthentication 실행됨 : 인증 완료");
+        super.successfulAuthentication(request, response, chain, authResult);
     }
 }
