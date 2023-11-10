@@ -15,6 +15,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import com.cos.jwt.config.auth.PrincipalDetailsService;
 import com.cos.jwt.config.filter.JwtAuthenticationFilter;
+import com.cos.jwt.config.filter.JwtAuthorizationFilter;
 import com.cos.jwt.config.filter.MyFilter1;
 
 import lombok.RequiredArgsConstructor;
@@ -70,8 +71,8 @@ public class SecurityConfig {
                 @Override
                 public void configure(HttpSecurity http) throws Exception {
                         AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-                        http.addFilter(corsFilter).addFilter(new JwtAuthenticationFilter(authenticationManager));
+                        http.addFilter(corsFilter).addFilter(new JwtAuthenticationFilter(authenticationManager))
+                                        .addFilter(new JwtAuthorizationFilter(authenticationManager));
                 }
-
         }
 }
