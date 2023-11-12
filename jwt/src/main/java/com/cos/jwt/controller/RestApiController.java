@@ -1,16 +1,19 @@
 package com.cos.jwt.controller;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cos.jwt.config.auth.PrincipalDetails;
 import com.cos.jwt.model.User;
 import com.cos.jwt.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,5 +38,28 @@ public class RestApiController {
         user.setRoles("ROLE_USER");
         userRepository.save(user);
         return "회원가입 완료";
+    }
+
+    // user, manager, admin 권한 접근 가능
+    @GetMapping("/api/v1/user")
+    public String user(Authentication authentication) {
+        System.out.println("User 권한 인증 완료");
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        System.out.println("유저 이름 : " + principalDetails.getUser().getUsername());
+        System.out.println("유저 권한 : " + principalDetails.getUser().getRoles());
+        System.out.println("유저 이메일 : " + principalDetails.getUser().getEmail());
+        return "<h1>user<h1>";
+    }
+
+    // manager, admin 권한 접근 가능
+    @GetMapping("/api/v1/manager")
+    public String manager() {
+        return "manager";
+    }
+
+    // admin 권한만 접근 가능
+    @GetMapping("/api/v1/admin")
+    public String admin() {
+        return "admin";
     }
 }
